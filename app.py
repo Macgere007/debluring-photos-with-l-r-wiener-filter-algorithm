@@ -109,10 +109,29 @@ def process():
         combination_color_2= np.clip(combination_color, 0, 255)
 
         #image encoder
-        blurred_image_color_base64=base64.b64encode(cv2.imencode('.png', blurred_image)[1]).decode('utf-8')
+        blurred_image_color_base64 = base64.b64encode(cv2.imencode('.png', blurred_image)[1]).decode('utf-8')
         wiener_color_base64 = base64.b64encode(cv2.imencode('.png', wiener_restored_color)[1]).decode('utf-8')
         lr_color_base64 = base64.b64encode(cv2.imencode('.png', lucy_richardson_restored_color)[1]).decode('utf-8')
         combination_color_base64 = base64.b64encode(cv2.imencode('.png', combination_color_2)[1]).decode('utf-8')
+
+        output_dir = os.path.dirname(__file__)
+
+        blurred_output_path = os.path.join(output_dir, 'blurred_image_color_base64.png')
+        wiener_output_path = os.path.join(output_dir, 'wiener_color_base64.png')
+        lr_output_path = os.path.join(output_dir, 'lr_color_base64.png')
+        combination_output_path = os.path.join(output_dir, 'combination_color_base64.png')
+
+        with open(blurred_output_path, 'wb') as file:
+            file.write(base64.b64decode(blurred_image_color_base64))
+
+        with open(wiener_output_path, 'wb') as file:
+            file.write(base64.b64decode(wiener_color_base64))
+
+        with open(lr_output_path, 'wb') as file:
+            file.write(base64.b64decode(lr_color_base64))
+
+        with open(combination_output_path, 'wb') as file:
+            file.write(base64.b64decode(combination_color_base64))
     
         return render_template('result.html',
                             blur_color=blurred_image_color_base64,
