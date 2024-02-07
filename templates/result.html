@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing Result</title>
+</head>
+<body>
+    <h1>Image Processing Result</h1>
+    
+    <!-- Wiener Filter (Gray) -->
+    <h2>Wiener Filter (Gray)</h2>
+    <img src="data:image/png;base64,{{ wiener_gray }}" alt="Wiener Filter (Gray)">
+
+    <!-- Lucy Richardson (Gray) -->
+    <h2>Lucy Richardson (Gray)</h2>
+    <img src="data:image/png;base64,{{ lr_gray }}" alt="Lucy Richardson (Gray)">
+    
+    <!-- Combination (Gray) -->
+    <h2>Combination (Gray)</h2>
+    <img src="data:image/png;base64,{{ combination_gray }}" alt="Combination (Gray)">
+
+    <!-- Wiener Filter (Color) -->
+    <h2>Wiener Filter (Color)</h2>
+    <img src="data:image/png;base64,{{ wiener_color }}" alt="Wiener Filter (Color)">
+
+    <!-- Lucy Richardson (Color) -->
+    <h2>Lucy Richardson (Color)</h2>
+    <img src="data:image/png;base64,{{ lr_color }}" alt="Lucy Richardson (Color)">
+   
+    <!-- Combination (Color) -->
+    <h2>Combination (Color)</h2>
+    <img src="data:image/png;base64,{{ combination_color }}" alt="Combination (Color)">
+</body>
+</html>
