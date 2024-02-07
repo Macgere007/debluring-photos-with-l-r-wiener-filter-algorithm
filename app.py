@@ -10,12 +10,6 @@ app = Flask(__name__)
 
 small_constant = 1e-6
 
-# def get_image_path():
-#     root = Tk()
-#     root.withdraw()
-#     file_path = filedialog.askopenfilename(title="Select Image File", filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp")])
-#     return file_path
-
 def wiener_filter_gray(blurred, kernel, noise_var):
     # Calculate the Fourier transform of the blurred image
     F_blurred = fft.fft2(blurred)
@@ -30,6 +24,7 @@ def wiener_filter_gray(blurred, kernel, noise_var):
     return np.clip(restored, 0, 255)
 
 def lucy_richardson_gray(image, kernel, iterations):
+
     kernel /= np.sum(kernel)
     
     for _ in range(iterations):
@@ -53,10 +48,10 @@ def wiener_filter_color(blurred, kernel, noise_var):
     
     # Merge the restored channels
     restored = cv2.merge(restored_channels)
-    
     return np.clip(np.abs(restored), 0, 255).astype(np.uint8)
 
 def lucy_richardson_color(image, kernel, iterations):
+
     kernel /= np.sum(kernel)
 
     # Separate channels for color images
@@ -74,7 +69,6 @@ def lucy_richardson_color(image, kernel, iterations):
 
     # Merge the restored channels
     restored = np.stack(restored_channels, axis=-1)
-
     return np.clip(restored, 0, 255).astype(np.uint8)
 
 
@@ -86,13 +80,13 @@ def index():
 @app.route('/process', methods=['POST'])
 def process():
     if request.method == 'POST':
-        # Check if the 'file' key is in the request.files dictionary
+        # if the file format isn't supported
         if 'file' not in request.files:
             return render_template('index.html', error='No file part')
 
         uploaded_file = request.files['file']
 
-        # Check if the user does not select a file
+        # if the user does not select a file
         if uploaded_file.filename == '':
             return render_template('index.html', error='No selected file')
 
@@ -100,36 +94,28 @@ def process():
 
         uploaded_file.save(file_path)
 
-        blurred_image_gray = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
-        blurred_image = cv2.imread(file_path)
 
-        # Define your kernel and noise variance
-        kernel_size = 6
+        # Define kernel and noise variance to adjust blur reduction
+        kernel_size = 7
         kernel = np.ones((kernel_size, kernel_size)) / (kernel_size ** 2)
-        noise_variance = 0.12
-
-        # Perform image processing
-        wiener_restored_gray = wiener_filter_gray(blurred_image_gray, kernel, noise_variance)
-        lucy_richardson_restored_gray = lucy_richardson_gray(wiener_restored_gray, kernel, iterations=12)
-        combination_gray = wiener_restored_gray + lucy_richardson_restored_gray
-
+        noise_variance = 0.05
+        # blur
+        blurred_image = cv2.imread(file_path)
+        #perform image deblurring
         wiener_restored_color = wiener_filter_color(blurred_image, kernel, noise_variance)
-        lucy_richardson_restored_color = lucy_richardson_color(wiener_restored_color, kernel, iterations=12)
+        lucy_richardson_restored_color = lucy_richardson_color(wiener_restored_color, kernel, iterations=10)
         blend_ratio = 0.5
         combination_color = np.average([wiener_restored_color, lucy_richardson_restored_color], axis=0, weights=[blend_ratio, 1 - blend_ratio])
-        combination_color = np.clip(combination_color, 0, 255).astype(np.uint8)
+        combination_color_2= np.clip(combination_color, 0, 255)
 
-        wiener_gray_base64 = base64.b64encode(cv2.imencode('.png', wiener_restored_gray)[1]).decode('utf-8')
-        lr_gray_base64 = base64.b64encode(cv2.imencode('.png', lucy_richardson_restored_gray)[1]).decode('utf-8')
-        combination_gray_base64 = base64.b64encode(cv2.imencode('.png', combination_gray)[1]).decode('utf-8')
+        #image encoder
+        blurred_image_color_base64=base64.b64encode(cv2.imencode('.png', blurred_image)[1]).decode('utf-8')
         wiener_color_base64 = base64.b64encode(cv2.imencode('.png', wiener_restored_color)[1]).decode('utf-8')
         lr_color_base64 = base64.b64encode(cv2.imencode('.png', lucy_richardson_restored_color)[1]).decode('utf-8')
-        combination_color_base64 = base64.b64encode(cv2.imencode('.png', combination_color)[1]).decode('utf-8')
-
+        combination_color_base64 = base64.b64encode(cv2.imencode('.png', combination_color_2)[1]).decode('utf-8')
+    
         return render_template('result.html',
-                            wiener_gray=wiener_gray_base64,
-                            lr_gray=lr_gray_base64,
-                            combination_gray=combination_gray_base64,
+                            blur_color=blurred_image_color_base64,
                             wiener_color=wiener_color_base64,
                             lr_color=lr_color_base64,
                             combination_color=combination_color_base64,
