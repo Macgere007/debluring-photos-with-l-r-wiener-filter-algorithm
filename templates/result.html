@@ -11,13 +11,14 @@
             margin: 20px;
         }
 
-        h2 {
-            color: #333;
+        .table-container {
+            width: 50%; /* Set table container width to 50% of the viewport */
+            margin-bottom: 20px; /* Add space below the table */
         }
 
         table {
             width: 100%;
-            height: 100%;
+            margin-top: 20px;
             border-collapse: collapse;
         }
 
@@ -32,32 +33,34 @@
             max-height: 100%; /* Set the maximum height for the images */
             margin-bottom: 5px;
         }
+  
     </style>
 </head>
 <body>
     <h1>Image Processing Result</h1>
-
-    <table>
-        <tr>
-            <th>Blur (Color)</th>
-            <th>Wiener Filter (Color)</th>
-            <th>Lucy Richardson (Color)</th>
-            <th>Combination (Color)</th>
-        </tr>
-        <tr>
-            <td>
-                <img src="data:image/png;base64,{{ blur_color }}" alt="Blur (Color)">
-            </td>
-            <td>
-                <img src="data:image/png;base64,{{ wiener_color }}" alt="Wiener Filter (Color)">
-            </td>
-            <td>
-                <img src="data:image/png;base64,{{ lr_color }}" alt="Lucy Richardson (Color)">
-            </td>
-            <td>
-                <img src="data:image/png;base64,{{ combination_color }}" alt="Combination (Color)">
-            </td>
-        </tr>
-    </table>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Blur (Color)</th>
+                <!-- <th>Wiener Filter (Color)</th>
+                <th>Lucy Richardson (Color)</th> -->
+                <th>Combination (Color)</th>
+            </tr>
+            <tr>
+                <td>
+                    <img src="data:image/png;base64,{{ blur_color }}" alt="Blur (Color)">
+                </td>
+                <!-- <td>
+                    <img src="data:image/png;base64,{{ wiener_color }}" alt="Wiener Filter (Color)">
+                </td>
+                <td>
+                    <img src="data:image/png;base64,{{ lr_color }}" alt="Lucy Richardson (Color)">
+                </td> -->
+                <td>
+                    <img src="data:image/png;base64,{{ combination_color }}" alt="Combination (Color)">
+                </td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>

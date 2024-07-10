@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request
-import cv2
-import numpy as np
-from scipy.signal import fftconvolve
-from scipy import fft
+from flask import Flask, render_template, request 
+import cv2 
+import numpy as np 
+from scipy.signal import fftconvolve 
+from scipy import fft 
 import os
 import base64
 
@@ -10,29 +10,29 @@ app = Flask(__name__)
 
 small_constant = 1e-6
 
-def wiener_filter_gray(blurred, kernel, noise_var):
-    # Calculate the Fourier transform of the blurred image
-    F_blurred = fft.fft2(blurred)
+# def wiener_filter_gray(blurred, kernel, noise_var):
+#     # Calculate the Fourier transform of the blurred image
+#     F_blurred = fft.fft2(blurred)
     
-    # Calculate the Fourier transform of the kernel and pad it to match the shape of F_blurred
-    F_kernel = fft.fft2(kernel, s=F_blurred.shape)
+#     # Calculate the Fourier transform of the kernel and pad it to match the shape of F_blurred
+#     F_kernel = fft.fft2(kernel, s=F_blurred.shape)
     
-    # Apply the Wiener filter
-    F_restored = np.conj(F_kernel) / (np.abs(F_kernel)**2 + noise_var)
-    restored = np.real(fft.ifft2(F_blurred * F_restored))
+#     # Apply the Wiener filter
+#     F_restored = np.conj(F_kernel) / (np.abs(F_kernel)**2 + noise_var)
+#     restored = np.real(fft.ifft2(F_blurred * F_restored))
     
-    return np.clip(restored, 0, 255)
+#     return np.clip(restored, 0, 255)
 
-def lucy_richardson_gray(image, kernel, iterations):
+# def lucy_richardson_gray(image, kernel, iterations):
 
-    kernel /= np.sum(kernel)
+#     kernel /= np.sum(kernel)
     
-    for _ in range(iterations):
-        est_blur = fftconvolve(image, kernel, 'same')
-        ratio = image / est_blur
-        image *= fftconvolve(ratio, kernel[::-1, ::-1], 'same')
+#     for _ in range(iterations):
+#         est_blur = fftconvolve(image, kernel, 'same')
+#         ratio = image / est_blur
+#         image *= fftconvolve(ratio, kernel[::-1, ::-1], 'same')
     
-    return np.clip(image, 0, 255)
+#     return np.clip(image, 0, 255)
 
 def wiener_filter_color(blurred, kernel, noise_var):
     # Separate channels for color images
